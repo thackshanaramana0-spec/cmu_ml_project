@@ -1,0 +1,14 @@
+{
+  "name": "academic-copilot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Run the Academic Copilot backend and frontend together.",
+  "scripts": {
+    "dev": "concurrently -k -n backend,frontend -c blue,green \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "cd backend && .venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --port 8000",
+    "dev:frontend": "npm --prefix frontend run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
