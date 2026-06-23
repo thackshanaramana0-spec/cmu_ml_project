@@ -103,3 +103,34 @@ export async function sendChat(
   }
   return res.json();
 }
+
+// ---- Chat sessions (history) ----
+
+export interface SessionSummary {
+  id: string;
+  title: string;
+  created_at: string;
+}
+
+export interface ChatMessageOut {
+  role: "user" | "assistant";
+  content: string;
+  sources?: Source[] | null;
+  created_at: string;
+}
+
+export interface SessionDetail extends SessionSummary {
+  messages: ChatMessageOut[];
+}
+
+export async function listSessions(): Promise<SessionSummary[]> {
+  const res = await fetch(url("/api/chat/sessions"), { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to load chats (${res.status})`);
+  return res.json();
+}
+
+export async function getSession(id: string): Promise<SessionDetail> {
+  const res = await fetch(url(`/api/chat/sessions/${id}`), { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to load chat (${res.status})`);
+  return res.json();
+}

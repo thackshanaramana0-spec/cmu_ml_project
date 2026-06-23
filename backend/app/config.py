@@ -8,12 +8,19 @@ infrastructure details.
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Resolve .env to an absolute path (backend/.env) based on this file's location,
+# NOT the process working directory. Under `uvicorn --reload` the worker's cwd is
+# not guaranteed, and a cwd-relative ".env" can silently miss, falling back to the
+# SQLite default — which previously caused the app to run on the wrong database.
+_ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
+
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=str(_ENV_FILE), extra="ignore")
 
     # Owner (no auth in the MVP; this identity is seeded as the single owner)
     app_owner_email: str = "owner@localhost"
